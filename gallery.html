@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: darkblue;
+      display: flex;
+      justify-content: center;
+      height: 30px;
+      align-items: center;
+    }
+
+    nav input {
+      border-radius: 7px;
+      text-align: center;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-items: last baseline;
+    }
+
+    .container img {
+      height: 200px;
+      border: 2px solid black;
+      margin: 5px;
+    }
+
+    /* The Modal (background) */
+    .modal {
+      display: none;
+      /* Hidden by default */
+      position: fixed;
+      /* Stay in place */
+      z-index: 1;
+      /* Sit on top */
+      padding: 100px;
+      /* Location of the box */
+      left: 0;
+      top: 0%;
+      width: 100vw;
+      /* Full width */
+      height: 100vh;
+      /* Full height */
+      overflow: visible;
+      /* Enable scroll if needed */
+      background-color: rgb(0, 0, 0);
+      /* Fallback color */
+      background-color: rgba(0, 0, 0, 0.9);
+      /* Black w/ opacity */
+    }
+
+    /* Modal Content (image) */
+    .modal-content {
+      margin: auto;
+      display: block;
+      /*width: 80%;
+      max-width: 700px;*/
+      max-height: 100%;
+    }
+
+    /* Caption of Modal Image */
+    #caption,
+    #connect {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      text-align: center;
+      color: #ccc;
+      padding: 10px 0;
+    }
+
+    /* Add Animation */
+    .modal-content,
+    #caption {
+      -webkit-animation-name: zoom;
+      -webkit-animation-duration: 0.6s;
+      animation-name: zoom;
+      animation-duration: 0.6s;
+    }
+
+    @keyframes zoom {
+      from {
+        transform: scale(0)
+      }
+
+      to {
+        transform: scale(1)
+      }
+    }
+
+    /* The Close Button */
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #f1f1f1;
+      font-size: 40px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #bbb;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* 100% Image Width on Smaller Screens */
+    @media only screen and (max-width: 700px) {
+      .modal-content {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <input id="inputSRC" type="text" placeholder="type">
+    <input id="inputRate" type="number" placeholder="rate" min="0" max="5" value="0">
+    <button onclick="createNewImg()" type="button"
+      style="background-color: lightgreen;border: 2px solid gray;border-radius: 20px;width: 80px;height: 25px;">release!</button>
+    <!-- <button id="blackMode" onclick="blackMode()" type="button"
+      style="display:none;border: 2px solid gray;border-radius: 20px;width: 80px;height: 25px;">activated!</button> -->
+  </nav>
+  <div class="container"></div>
+
+  <!-- The Modal -->
+  <div id="myModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="img01">
+    <div id="caption"></div>
+    <div id="connect">as</div>
+  </div>
+
+</body>
+
+<script>
+  let mode = "putih";
+  const container = document.querySelector(".container");
+  container.innerHTML = localStorage.getItem('localStorageImg');
+  console.log(localStorage.localStorageImg);
+  // Get the modal
+  var modal = document.getElementById("myModal");
+
+  // Get the image and insert it inside the modal - use its "alt" text as a caption
+  //var img = document.getElementById("myImg");
+  var imgclass = document.getElementsByClassName("myImgClass");
+  var modalImg = document.getElementById("img01");
+  var captionText = document.getElementById("caption");
+  var connect = document.getElementById("connect");
+  console.log(imgclass)
+
+  for (let i = 0; i < imgclass.length; i++) {
+    imgclass[i].onclick = function () {
+      modal.style.display = "block";
+      modalImg.src = this.src;
+      captionText.innerHTML = this.alt;
+      connect.innerHTML = [i];
+    }
+  }
+
+  modalImg.onclick = function () {
+    const konfirmasi = confirm('yakin mau di delete?');
+    if (konfirmasi) {
+      document.querySelectorAll(`.myImgClass`)[connect.innerHTML].remove();
+      modal.style.display = "none";
+      for (let i = 0; i < imgclass.length; i++) {
+        imgclass[i].onclick = function () {
+          modal.style.display = "block";
+          modalImg.src = this.src;
+          captionText.innerHTML = this.alt;
+          connect.innerHTML = [i];
+        }
+      }
+      if (mode == "putih") {
+        localStorage.setItem(`localStorageImg`, `${container.innerHTML}`);
+        console.log(localStorage.localStorageImg);
+      } else if (mode == "hitam") {
+        localStorage.setItem(`localStorageImgHitam`, `${container.innerHTML}`);
+        console.log(localStorage.localStorageImgHitam);
+      }
+    };
+  }
+
+  document.querySelector("body").style.backgroundColor = "aqua";
+  function whiteMode() {
+    mode = "putih";
+    container.innerHTML = localStorage.getItem('localStorageImg');
+    document.querySelector("body").style.backgroundColor = "aqua";
+
+    for (let i = 0; i < imgclass.length; i++) {
+      imgclass[i].onclick = function () {
+        modal.style.display = "block";
+        modalImg.src = this.src;
+        captionText.innerHTML = this.alt;
+        connect.innerHTML = [i];
+      }
+    }
+  }
+  function blackMode() {
+    mode = "hitam";
+    container.innerHTML = localStorage.getItem('localStorageImgHitam');
+    document.querySelector("body").style.backgroundColor = "lime";
+
+    for (let i = 0; i < imgclass.length; i++) {
+      imgclass[i].onclick = function () {
+        modal.style.display = "block";
+        modalImg.src = this.src;
+        captionText.innerHTML = this.alt;
+        connect.innerHTML = [i];
+      }
+    }
+  }
+
+  function createNewImg() {
+    const inputSRC = document.querySelector("#inputSRC");
+    const inputRate = document.querySelector("#inputRate");
+
+    const newImg = document.createElement("img");
+    newImg.setAttribute("src", `${inputSRC.value}`);
+    newImg.setAttribute("class", `myImgClass`);
+    newImg.setAttribute("alt", `${inputRate.value}/5`);
+
+    container.insertBefore(newImg, container.children[0]);
+
+    for (let i = 0; i < imgclass.length; i++) {
+      imgclass[i].onclick = function () {
+        modal.style.display = "block";
+        modalImg.src = this.src;
+        captionText.innerHTML = this.alt;
+        connect.innerHTML = [i];
+      }
+    }
+
+    if (mode == "putih") {
+      localStorage.setItem(`localStorageImg`, `${container.innerHTML}`);
+      console.log(localStorage.localStorageImg);
+    } else if (mode == "hitam") {
+      localStorage.setItem(`localStorageImgHitam`, `${container.innerHTML}`);
+      console.log(localStorage.localStorageImgHitam);
+    }
+  }
+
+  //"onclick", "const konfirmasi = confirm('yakin mau di delete?');if(konfirmasi){this.remove();};
+  // Get the <span> element that closes the modal
+  var span = document.getElementsByClassName("close")[0];
+
+  // When the user clicks on <span> (x), close the modal
+  span.onclick = function () {
+    modal.style.display = "none";
+  }
+</script>
+
+</html>
